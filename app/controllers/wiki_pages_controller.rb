@@ -5,8 +5,22 @@ class WikiPagesController < ApplicationController
   layout "sidebar"
 
   def new
-    @wiki_page = authorize WikiPage.new(permitted_attributes(WikiPage))
-    respond_with(@wiki_page)
+    #@wiki_page = authorize WikiPage.new(permitted_attributes(WikiPage))
+    #respond_with(@wiki_page)
+	if !params[:import].blank?
+	  res = http.cache(1.minute).parsed_get(
+		"https://danbooru.donmai.us/wiki_pages/#{::Danbooru::URL.escape(params[:import])}.json",
+		params: { only: "body,other_names" }
+	  )
+	  
+	  params[:wiki_page] = {
+	    title: params[:import],
+		other_names: res[:other_names].join(" "),
+		body: res[:body]
+	  }
+	end
+	@wiki_page = authorize WikiPage.new(permitted_attributes(WikiPage))
+	respond_with(@wiki_page)
   end
 
   def edit
