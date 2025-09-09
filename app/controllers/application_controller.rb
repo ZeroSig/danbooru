@@ -215,7 +215,7 @@ class ApplicationController < ActionController::Base
     # @see https://github.com/varvet/pundit
     def authorize(record, action = nil, policy_class: nil)
       super
-      check_rate_limit(record, policy_class: policy_class)
+      #check_rate_limit(record, policy_class: policy_class)
       record
     end
 
